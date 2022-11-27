@@ -1,4 +1,14 @@
-# 1.0.1 - algorithm runs
+# 1.0.2
+
+## Fixed
+
+## Changed
+
+## Added
+
+- GUI and Controller initial implementation
+
+# 1.0.1
 
 ## Fixed
 
@@ -8,7 +18,7 @@
 
 - Basic algorithm version
 
-# 1.0.0 - init project
+# 1.0.0
 
 ## Fixed
 

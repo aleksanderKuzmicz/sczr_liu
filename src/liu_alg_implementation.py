@@ -1,16 +1,6 @@
 import random
 
-DEFAULT = True
-DEFAULT_VALUES = [
-        [2, 4, 7],
-        [1, 1, 2],
-        [2, 0, 3],
-        [1, 4, 5],
-        [3, 2, 6],
-    ]
-T_MIN = 1
-T_MAX = 4
-N = 5
+from src.configuration.config import DEFAULT, DEFAULT_TASK_VALUES, T_MAX, T_MIN, N
 
 
 class Task:
@@ -47,23 +37,24 @@ class Task:
     __repr__ = __str__
 
 
-def create_tasks(min_time, max_time, tasks_number):
-    tasks_list = []
-    for el in range(tasks_number):
-        execution_time = random.randint(min_time, max_time)
-        release_time = random.randint(min_time, max_time)
-        deadline = release_time + execution_time + random.randint(min_time, max_time)
+class Model:
 
-        tasks_list.append(Task(p=execution_time, r=release_time, d=deadline))
-    return tasks_list
+    @staticmethod
+    def create_tasks(min_time, max_time, tasks_number):
+        tasks_list = []
+        for el in range(tasks_number):
+            execution_time = random.randint(min_time, max_time)
+            release_time = random.randint(min_time, max_time)
+            deadline = release_time + execution_time + random.randint(min_time, max_time)
 
+            tasks_list.append(Task(p=execution_time, r=release_time, d=deadline))
+        return tasks_list
 
-def create_tasks_default(values):
-    tasks_list = [Task(p=el[0], r=el[1], d=el[2]) for el in values]
-    return tasks_list
+    @staticmethod
+    def create_tasks_default(values):
+        tasks_list = [Task(p=el[0], r=el[1], d=el[2]) for el in values]
+        return tasks_list
 
-
-class Algos:
     @staticmethod
     def perform_alg(tasks):
         # init before the start
@@ -115,10 +106,10 @@ class Algos:
 
 if __name__ == "__main__":
     if DEFAULT:
-        tasks_list = create_tasks_default(DEFAULT_VALUES)
+        tasks_list = Model.create_tasks_default(DEFAULT_TASK_VALUES)
     else:
-        tasks_list = create_tasks(T_MIN, T_MAX, N)
+        tasks_list = Model.create_tasks(T_MIN, T_MAX, N)
 
     # TODO: print Input Data to the GUI table
     print(f"Created task list: {tasks_list}")
-    Algos.perform_alg(tasks_list)
+    Model.perform_alg(tasks_list)
