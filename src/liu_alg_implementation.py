@@ -14,22 +14,37 @@ N = 5
 
 
 class Task:
-    done_status: bool = None
+    task_number = 0  # TODO: change to 0 or -1
+    task_name = None
+
     # Data required for algorith
     release_time: int = None
     execution_time: int = None
     deadline: int = None
+    # task state
+    not_done: bool = None
+    current_execution_time = None
     # Data after the
     start_time: int = None
     stop_time: int = None
     delay: int = None
-
     executed_time: int = None
 
     def __init__(self, p, r, d):
-        self.executed_time = p
+        self.execution_time = p
         self.release_time = r
         self.deadline = d
+
+        self.not_done = True
+        self.current_execution_time = 0
+
+        Task.task_number += 1
+        self.task_name = f"Z:{self.task_number}"
+
+    def __str__(self):
+        return self.task_name
+
+    __repr__ = __str__
 
 
 def create_tasks(min_time, max_time, tasks_number):
@@ -44,14 +59,50 @@ def create_tasks(min_time, max_time, tasks_number):
 
 
 def create_tasks_default(values):
-    tasks_list = [Task(p=el[1], r=el[0], d=el[2]) for el in values]
+    tasks_list = [Task(p=el[0], r=el[1], d=el[2]) for el in values]
     return tasks_list
 
 
 class Algos:
     @staticmethod
-    def perform_alg(Tasks):
-        pass
+    def perform_alg(tasks):
+        # init before the start
+        T = 0
+        done_tasks = []
+
+        while True:
+            # break check - if all tasks are done:
+            if not any([task.not_done for task in tasks]):
+                break
+
+            # find tasks that can be executed in current timepoint
+            available_tasks = [task for task in tasks if task.release_time <= T and task.not_done]
+            # print(f"time: {T}, available tasks: {available_tasks}")
+
+            if len(available_tasks) > 0:
+                # get task with closes deadline
+                min_deadline = -1
+                chosen_task = None
+                for task in available_tasks:
+                    if task.deadline < min_deadline or min_deadline < 0:
+                        min_deadline = task.deadline
+                        chosen_task = task
+
+
+                # Debug: print current task
+                print(f"running: {chosen_task}")
+
+                # run task for 1s
+                chosen_task.current_execution_time += 1
+
+                # check if task should be done
+                if chosen_task.current_execution_time == chosen_task.execution_time:
+                    chosen_task.not_done = False
+                    #print(f"wywalam {chosen_task}")
+
+            # end of the loop
+            T += 1
+
         # T is current time
         # 0 - get pool of available (release tima and status(if done or not) tasks for T
         # 1 - find Task with closest deadline
@@ -62,7 +113,6 @@ class Algos:
 
 
 
-
 if __name__ == "__main__":
     if DEFAULT:
         tasks_list = create_tasks_default(DEFAULT_VALUES)
@@ -70,6 +120,5 @@ if __name__ == "__main__":
         tasks_list = create_tasks(T_MIN, T_MAX, N)
 
     # TODO: print Input Data to the GUI table
-
-
-
+    print(f"Created task list: {tasks_list}")
+    Algos.perform_alg(tasks_list)
