@@ -41,6 +41,7 @@ class Model:
 
     @staticmethod
     def create_tasks(min_time, max_time, tasks_number):
+        print("[start] Model: create_tasks")
         tasks_list = []
         for el in range(tasks_number):
             execution_time = random.randint(min_time, max_time)
@@ -48,6 +49,7 @@ class Model:
             deadline = release_time + execution_time + random.randint(min_time, max_time)
 
             tasks_list.append(Task(p=execution_time, r=release_time, d=deadline))
+        print("[end]   Model: create_tasks")
         return tasks_list
 
     @staticmethod
@@ -59,8 +61,6 @@ class Model:
     def perform_alg(tasks):
         # init before the start
         T = 0
-        done_tasks = []
-
         while True:
             # break check - if all tasks are done:
             if not any([task.not_done for task in tasks]):
@@ -79,8 +79,6 @@ class Model:
                         min_deadline = task.deadline
                         chosen_task = task
 
-
-                # Debug: print current task
                 print(f"running: {chosen_task}")
 
                 # run task for 1s
@@ -89,19 +87,9 @@ class Model:
                 # check if task should be done
                 if chosen_task.current_execution_time == chosen_task.execution_time:
                     chosen_task.not_done = False
-                    #print(f"wywalam {chosen_task}")
 
             # end of the loop
             T += 1
-
-        # T is current time
-        # 0 - get pool of available (release tima and status(if done or not) tasks for T
-        # 1 - find Task with closest deadline
-        # 2 - run that task for 1 time unit
-        # 2.1 T+=1
-        # 3 - if task is done - set status to done
-        # 4 - Break if all tasks are done (check statuses)
-
 
 
 if __name__ == "__main__":

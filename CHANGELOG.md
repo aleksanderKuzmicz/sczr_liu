@@ -1,3 +1,15 @@
+# 1.0.3
+
+## Fixed
+
+## Changed
+
+## Added
+
+- GUI input table generation mechanism
+- Controller connects Signals and Slots - doesn't work
+- Draft prints for debugging :D
+
 # 1.0.2
 
 ## Fixed

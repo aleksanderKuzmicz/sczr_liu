@@ -12,4 +12,20 @@ T_MAX = 4
 N = 5
 
 # GUI
-WINDOW_SIZE = 235
+WINDOW_SIZE = 500
+BUTTON_SIZE = 200
+LINE_EDIT_SIZE = 200
+# 10 colors max
+COLOR_PALETTE = [
+        "blue",
+        "orange",
+        "maroon",
+        "aqua",
+        "red",
+        "teal",
+        "olive",
+        "green",
+        "purple",
+        "yellow",
+        "grey"
+]

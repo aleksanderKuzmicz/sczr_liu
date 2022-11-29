@@ -4,4 +4,8 @@
 
 # Python
 **/__pyache__
+**/__pycache__/**
 venv
+
+# drafts
+**draft.py
