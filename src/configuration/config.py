@@ -31,5 +31,5 @@ COLOR_PALETTE = [
         "#9d4edd", #fioletowy
         "#0028FF", #mocny niebieski
         "#00f5d4", #niebieski
-        "#25a18e", #zielony
+        "#25a18e" #zielony
 ]
