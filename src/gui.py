@@ -20,7 +20,7 @@ class LiuWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("PyCalc")
+        self.setWindowTitle("App")
         self.setFixedSize(WINDOW_SIZE, WINDOW_SIZE)
         self.general_layout = QGridLayout()
         central_widget = QWidget(self)
