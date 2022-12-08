@@ -182,18 +182,18 @@ class LiuWindow(QMainWindow):
 
     def fill_input_grid(self, tasks_list):
         print("[Start] fill_input_grid")
-        # tasks_n_label = QLabel("Task n.")
-        # p_label = QLabel("p")
-        # r_label = QLabel("r")
-        # d_label = QLabel("d")
-        # tasks_n_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # p_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # r_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # d_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # self.input_quarter_layout.addWidget(tasks_n_label, 0, 0)
-        # self.input_quarter_layout.addWidget(p_label, 0, 1)
-        # self.input_quarter_layout.addWidget(r_label, 0, 2)
-        # self.input_quarter_layout.addWidget(d_label, 0, 3)
+        tasks_n_label = QLabel("Task n.")
+        p_label = QLabel("p")
+        r_label = QLabel("r")
+        d_label = QLabel("d")
+        tasks_n_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        p_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        r_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        d_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.input_values_layout.addWidget(tasks_n_label, 0, 0)
+        self.input_values_layout.addWidget(p_label, 0, 1)
+        self.input_values_layout.addWidget(r_label, 0, 2)
+        self.input_values_layout.addWidget(d_label, 0, 3)
 
         for row, task in enumerate(tasks_list):
             color = COLOR_PALETTE[row]

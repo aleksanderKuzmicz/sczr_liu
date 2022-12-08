@@ -1,3 +1,13 @@
+# 1.0.4
+
+## Fixed
+
+## Changed
+
+- Move all logic to single class. (Yes, I know - it's ugly, but at least works!)
+
+## Added
+
 # 1.0.3
 
 ## Fixed
