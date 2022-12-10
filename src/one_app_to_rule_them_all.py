@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QLabel,
     QVBoxLayout,
+    QHBoxLayout,
     QGridLayout,
     QFormLayout,
 )
@@ -21,6 +22,7 @@ from PyQt6.QtWidgets import (
 class Task:
     task_number = 0  # TODO: change to 0 or -1. Keep in mind - tasks will start from task_number+1
     task_name = None
+    task_color = None
 
     # Data required for algorith
     release_time: int = None
@@ -43,6 +45,7 @@ class Task:
         self.not_done = True
         self.current_execution_time = 0
 
+        self.task_color = COLOR_PALETTE[Task.task_number]
         Task.task_number += 1
         self.task_name = f"Z:{self.task_number}"
 
@@ -54,6 +57,7 @@ class Task:
 
 class LiuWindow(QMainWindow):
     """PyCalc's main window (GUI or view)."""
+    tasks_list = None
 
     def __init__(self):
         super().__init__()
@@ -67,8 +71,8 @@ class LiuWindow(QMainWindow):
 
         self._set_user_quarter()
         self._set_input_quarter()
-        # self._set_output_quarter()
-        # self._set_graph_quarter()
+        self._set_output_quarter()
+        self._set_graph_quarter()
 
         self._connect_signals_and_slots()
 
@@ -133,6 +137,32 @@ class LiuWindow(QMainWindow):
         # #### self.general_layout.addWidget(input_widget, 1, 0)
         self.general_layout.addLayout(self.input_quarter_layout, 1, 0)
 
+    def _set_output_quarter(self):
+        # input values layout
+        self.output_values_layout = QGridLayout()
+        self.output_values_layout.setSpacing(1)
+        output_values_widget = QWidget()
+        output_values_widget.setLayout(self.output_values_layout)
+
+        # add output values layout to output quarter layout
+        self.output_quarter_layout = QVBoxLayout()
+        self.output_quarter_layout.addWidget(QLabel("<h2>Output values</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
+        self.output_quarter_layout.addWidget(output_values_widget, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.general_layout.addLayout(self.output_quarter_layout, 0, 1)
+
+    def _set_graph_quarter(self):
+        self.graph_values_layout = QGridLayout()
+        self.graph_values_layout.setSpacing(1)
+        graph_values_widget = QWidget()
+        graph_values_widget.setLayout(self.graph_values_layout)
+
+        self.graph_quarter_layout = QVBoxLayout()
+        self.graph_quarter_layout.addWidget(QLabel("<h2>Graph</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
+        self.graph_quarter_layout.addWidget(graph_values_widget, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.general_layout.addLayout(self.graph_quarter_layout, 1, 1)
+
     def get_user_values(self) -> dict:
         print("[Start] get_user_values")
         user_values = {
@@ -162,30 +192,12 @@ class LiuWindow(QMainWindow):
 
         return tasks_list
 
-    def generate_input(self):
-        print("[Start] generate_input")
-        user_values = self.get_user_values()
-        # tasks_list = self.create_tasks(
-        #     min_time=user_values.get("min_time"),
-        #     max_time=user_values.get("max_time"),
-        #     tasks_number=user_values.get("tasks_number")
-        # )
-        # Plan B - start - use default values
-        tasks_list = self.create_tasks_default(DEFAULT_TASK_VALUES)
-        # Plan B - end
-        tasks_print_table = []
-        for task in tasks_list:
-            task_row = [str(task), task.execution_time, task.release_time, task.deadline]
-            tasks_print_table.append(task_row)
-        self.fill_input_grid(tasks_print_table)
-        print("[End]   generate_input")
-
     def fill_input_grid(self, tasks_list):
         print("[Start] fill_input_grid")
-        tasks_n_label = QLabel("Task n.")
-        p_label = QLabel("p")
-        r_label = QLabel("r")
-        d_label = QLabel("d")
+        tasks_n_label = QLabel("<h2>Task</h2>")
+        p_label = QLabel("<h2>p</h2>")
+        r_label = QLabel("<h2>r</h2>")
+        d_label = QLabel("<h2>d</h2>")
         tasks_n_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         p_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         r_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -196,19 +208,130 @@ class LiuWindow(QMainWindow):
         self.input_values_layout.addWidget(d_label, 0, 3)
 
         for row, task in enumerate(tasks_list):
-            color = COLOR_PALETTE[row]
+            color = task[0].task_color
             for col, task_parameter in enumerate(task):
-                parameter = QLabel(f"<h2>{str(task_parameter)} </h2>")
+                parameter = QLabel(f"<h2>{str(task_parameter)}</h2>")
                 parameter.setAlignment(Qt.AlignmentFlag.AlignCenter)
                 parameter.setFixedWidth(TASK_LABEL_WIDTH)
                 parameter.setStyleSheet(f"background-color: {color}")
                 self.input_values_layout.addWidget(parameter, row + 1, col)
-            print(f"color: {color}")
         print("[End]   fill_input_grid")
         # super().show()
 
+    def generate_input(self):
+        print("[Start] generate_input")
+        user_values = self.get_user_values()
+        # tasks_list = self.create_tasks(
+        #     min_time=user_values.get("min_time"),
+        #     max_time=user_values.get("max_time"),
+        #     tasks_number=user_values.get("tasks_number")
+        # )
+        # Plan B - start - use default values
+        self.tasks_list = self.create_tasks_default(DEFAULT_TASK_VALUES)
+        # Plan B - end
+        # prepare data for printing
+        tasks_print_table = []
+        for task in self.tasks_list:
+            task_row = [task, task.execution_time, task.release_time, task.deadline]
+            tasks_print_table.append(task_row)
+        # print data
+        self.fill_input_grid(tasks_print_table)
+        print("[End]   generate_input")
+
+    def perform_alg(self, tasks):
+        tasks_exec_order = []
+        # init before the start
+        T = 0
+        while True:
+            # break check - if all tasks are done:
+            if not any([task.not_done for task in tasks]):
+                break
+
+            # find tasks that can be executed in current timepoint
+            available_tasks = [task for task in tasks if task.release_time <= T and task.not_done]
+            # print(f"time: {T}, available tasks: {available_tasks}")
+
+            if len(available_tasks) > 0:
+                # get task with closes deadline
+                min_deadline = -1
+                chosen_task = None
+                for task in available_tasks:
+                    if task.deadline < min_deadline or min_deadline < 0:
+                        min_deadline = task.deadline
+                        chosen_task = task
+
+                print(f"running: {chosen_task}")
+                tasks_exec_order.append(chosen_task)
+                # set "start" time for chosen task (if not set only)
+                if not chosen_task.start_time:
+                    chosen_task.start_time = T
+                # run task for 1s
+                chosen_task.current_execution_time += 1
+
+                # check if task should be done
+                if chosen_task.current_execution_time == chosen_task.execution_time:
+                    chosen_task.not_done = False
+                    chosen_task.stop_time = T + 1  # +1 because task was executed for 1 time unit
+
+            # end of the loop
+            T += 1
+        return tasks_exec_order
+
+    def fill_output_grid(self, tasks_list):
+        print("[Start] fill_output_grid")
+        tasks_n_label = QLabel("<h2>Task</h2>")
+        p_label = QLabel("<h2>Start</h2>")
+        r_label = QLabel("<h2>Stop</h2>")
+        d_label = QLabel("<h2>Li</h2>")
+        tasks_n_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        p_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        r_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        d_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.output_values_layout.addWidget(tasks_n_label, 0, 0)
+        self.output_values_layout.addWidget(p_label, 0, 1)
+        self.output_values_layout.addWidget(r_label, 0, 2)
+        self.output_values_layout.addWidget(d_label, 0, 3)
+
+        for row, task in enumerate(tasks_list):
+            color = task[0].task_color
+            for col, task_parameter in enumerate(task):
+                parameter = QLabel(f"<h2>{str(task_parameter)}</h2>")
+                parameter.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                parameter.setFixedWidth(TASK_LABEL_WIDTH)
+                parameter.setStyleSheet(f"background-color: {color}")
+                self.output_values_layout.addWidget(parameter, row + 1, col)
+        print("[End]   fill_output_grid")
+
+    def fill_graph_layout(self, tasks_exec_order, lmax):
+        for idx, task in enumerate(tasks_exec_order):
+            graph_cell = QLabel(f"<h2>{str(task)}</h2>")
+            graph_cell.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            # graph_cell.setFixedWidth(TASK_LABEL_WIDTH)
+            graph_cell.setStyleSheet(f"background-color: {task.task_color}")
+            self.graph_values_layout.addWidget(graph_cell, 0, idx)
+        self.graph_quarter_layout.addWidget(QLabel(f"<h2>L<sub>max</sub>: {lmax}</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
+
+    def order_tasks(self):
+        # run Liu algorithm
+        tasks_exec_order = self.perform_alg(self.tasks_list)
+        # get tasks Li values
+        for task in self.tasks_list:
+            task.delay = task.stop_time - task.deadline
+        # get Lmax
+        lmax = max(task.delay for task in self.tasks_list)
+        # prepare data for printing
+        tasks_print_table = []
+        for task in self.tasks_list:
+            task_row = [task, task.start_time, task.stop_time, task.delay]
+            tasks_print_table.append(task_row)
+        # print data
+        self.fill_output_grid(tasks_print_table)
+        print(tasks_exec_order)
+        self.fill_graph_layout(tasks_exec_order, lmax)
+
     def _connect_signals_and_slots(self):
         self.button_fill_input.clicked.connect(self.generate_input)
+        self.button_run_alg.clicked.connect(self.order_tasks)
 
 
 if __name__ == "__main__":
