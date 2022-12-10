@@ -3,7 +3,7 @@ import random
 from functools import partial
 
 from src.configuration.config import DEFAULT_TASK_VALUES
-from src.configuration.config import WINDOW_HEIGHT, WINDOW_WIDTH, COLOR_PALETTE, EMPTY_COLOR, BUTTON_SIZE, LINE_EDIT_SIZE, TASK_LABEL_WIDTH, APP_BG_COLOR, BUTTON_COLOR
+from src.configuration.config import WINDOW_HEIGHT, WINDOW_WIDTH, SCROLL_HEIGHT, SCROLL_WIDTH, COLOR_PALETTE, EMPTY_COLOR, BUTTON_SIZE, LINE_EDIT_SIZE, TASK_LABEL_WIDTH, APP_BG_COLOR, BUTTON_COLOR
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QLabel,
+    QScrollArea,
     QVBoxLayout,
     QGridLayout,
     QFormLayout,
@@ -150,10 +151,15 @@ class LiuWindow(QMainWindow):
         self.graph_values_layout.setSpacing(1)
         graph_values_widget = QWidget()
         graph_values_widget.setLayout(self.graph_values_layout)
+        # scroll
+        graph_scroll = QScrollArea()
+        graph_scroll.setWidgetResizable(True)
+        graph_scroll.setFixedSize(SCROLL_WIDTH, SCROLL_HEIGHT)
+        graph_scroll.setWidget(graph_values_widget)
 
         self.graph_quarter_layout = QVBoxLayout()
         self.graph_quarter_layout.addWidget(QLabel("<h2>Graph</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
-        self.graph_quarter_layout.addWidget(graph_values_widget, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.graph_quarter_layout.addWidget(graph_scroll, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.general_layout.addLayout(self.graph_quarter_layout, 1, 1)
 
@@ -175,8 +181,8 @@ class LiuWindow(QMainWindow):
         tasks_list = []
         for el in range(tasks_number):
             execution_time = random.randint(min_time, max_time)
-            release_time = random.randint(min_time, 2*max_time)
-            deadline = release_time + execution_time + random.randint(min_time, max_time)
+            release_time = random.randint(min_time, max_time)
+            deadline = release_time + execution_time - random.randint(min_time, max_time)
 
             tasks_list.append(Task(p=execution_time, r=release_time, d=deadline))
         print("[End]   create_tasks")
