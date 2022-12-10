@@ -3,6 +3,7 @@
 ## Fixed
 
 - Setting "start time" for tasks. Used "==" instead if "is"
+- L value calculation. No more negative values
 
 ## Changed
 

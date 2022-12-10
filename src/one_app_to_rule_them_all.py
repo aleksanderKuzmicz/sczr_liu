@@ -331,7 +331,7 @@ class LiuWindow(QMainWindow):
         tasks_exec_order = self.perform_alg(self.tasks_list)
         # get tasks Li values
         for task in self.tasks_list:
-            task.delay = task.stop_time - task.deadline if task.stop_time > task.deadline else 0
+            task.delay = task.stop_time - task.deadline if task.stop_time > task.deadline else 0  # delay can't be negative
         # get Lmax
         lmax = max(task.delay for task in self.tasks_list)
         # prepare data for printing
