@@ -2,12 +2,15 @@
 
 ## Fixed
 
+- App properly reads user input parameters and create tasks based on them.
+
 ## Changed
 
 - Color palette.
 - Liu alg implementation - execution starting and ending time is saved in task obj.
-- task object gets it number from Class variable.
-- delete ":" from task name
+- Task object gets it number from Class variable.
+- Delete ":" from task name
+- Set app window size with config parameters "WINDOW_HEIGHT", "WINDOW_WIDTH"
 
 ## Added
 
