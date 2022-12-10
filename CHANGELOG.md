@@ -7,6 +7,7 @@
 - Color palette.
 - Liu alg implementation - execution starting and ending time is saved in task obj.
 - task object gets it number from Class variable.
+- delete ":" from task name
 
 ## Added
 
