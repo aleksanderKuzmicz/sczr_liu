@@ -20,7 +20,7 @@ from PyQt6.QtWidgets import (
 
 
 class Task:
-    task_number = 0  # TODO: change to 0 or -1. Keep in mind - tasks will start from task_number+1
+    task_number = 0
     task_name = None
     task_color = None
 
@@ -47,7 +47,7 @@ class Task:
 
         self.task_color = COLOR_PALETTE[Task.task_number]
         Task.task_number += 1
-        self.task_name = f"Z:{self.task_number}"
+        self.task_name = f"Z{Task.task_number}"
 
     def __str__(self):
         return self.task_name
