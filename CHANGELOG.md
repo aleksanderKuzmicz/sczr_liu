@@ -14,6 +14,7 @@
 - button to create default tasks
 - empty places in execution graph, when no tasks were executed
 - add timeline
+- Scroll for execution graph
 
 # 1.0.5
 
