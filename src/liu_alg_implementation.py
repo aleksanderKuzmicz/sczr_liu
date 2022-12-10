@@ -81,12 +81,16 @@ class Model:
 
                 print(f"running: {chosen_task}")
 
+                # set "start" time for chosen task (if not set only)
+                if not chosen_task.start_time:
+                    chosen_task.start_time = T
                 # run task for 1s
                 chosen_task.current_execution_time += 1
 
                 # check if task should be done
                 if chosen_task.current_execution_time == chosen_task.execution_time:
                     chosen_task.not_done = False
+                    chosen_task.stop_time = T + 1  # +1 because task was executed for 1 time unit
 
             # end of the loop
             T += 1

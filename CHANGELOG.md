@@ -1,3 +1,18 @@
+# 1.0.5
+
+## Fixed
+
+## Changed
+
+- Color palette.
+- Liu alg implementation - execution starting and ending time is saved in task obj.
+
+## Added
+
+- output and graph quarters
+- all logic required to fill output amd graph quarters
+- Task objects get color from colot palette during initialization.
+
 # 1.0.4
 
 ## Fixed
