@@ -3,7 +3,7 @@ import random
 
 from src.configuration.config import DEFAULT, DEFAULT_TASK_VALUES, T_MAX, T_MIN, N
 
-from src.configuration.config import WINDOW_SIZE, COLOR_PALETTE, BUTTON_SIZE, LINE_EDIT_SIZE, TASK_LABEL_WIDTH, APP_BG_COLOR, BUTTON_COLOR
+from src.configuration.config import WINDOW_HEIGHT, WINDOW_WIDTH, COLOR_PALETTE, BUTTON_SIZE, LINE_EDIT_SIZE, TASK_LABEL_WIDTH, APP_BG_COLOR, BUTTON_COLOR
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
@@ -62,7 +62,7 @@ class LiuWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("App")
-        self.setFixedSize(WINDOW_SIZE, WINDOW_SIZE)
+        self.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
         self.general_layout = QGridLayout()
         central_widget = QWidget(self)
         central_widget.setStyleSheet(f"background-color: {APP_BG_COLOR}")
@@ -166,11 +166,11 @@ class LiuWindow(QMainWindow):
     def get_user_values(self) -> dict:
         print("[Start] get_user_values")
         user_values = {
-            "min_time": self.user_min_time,
-            "max_time": self.user_max_time,
-            "tasks_number": self.user_tasks_number
+            "min_time": int(self.user_min_time.text()),
+            "max_time": int(self.user_max_time.text()),
+            "tasks_number": int(self.user_tasks_number.text())
         }
-        print("[End] get_user_values")
+        print(f"[End] get_user_values, returning: {user_values}")
         return user_values
 
     def create_tasks(self, min_time, max_time, tasks_number):
@@ -221,13 +221,13 @@ class LiuWindow(QMainWindow):
     def generate_input(self):
         print("[Start] generate_input")
         user_values = self.get_user_values()
-        # tasks_list = self.create_tasks(
-        #     min_time=user_values.get("min_time"),
-        #     max_time=user_values.get("max_time"),
-        #     tasks_number=user_values.get("tasks_number")
-        # )
+        self.tasks_list = self.create_tasks(
+            min_time=user_values.get("min_time"),
+            max_time=user_values.get("max_time"),
+            tasks_number=user_values.get("tasks_number")
+        )
         # Plan B - start - use default values
-        self.tasks_list = self.create_tasks_default(DEFAULT_TASK_VALUES)
+        # self.tasks_list = self.create_tasks_default(DEFAULT_TASK_VALUES)
         # Plan B - end
         # prepare data for printing
         tasks_print_table = []
