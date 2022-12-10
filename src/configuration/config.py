@@ -22,15 +22,14 @@ APP_BG_COLOR = "#FFFFFF"
 BUTTON_COLOR = "#E2EAFC"
 # 10 colors max
 COLOR_PALETTE = [
-        "#379392",  # green-blue
-        "orange",
-        "maroon",
-        "aqua",
-        "red",
-        "teal",
-        "olive",
-        "green",
-        "purple",
-        "yellow",
-        "grey"
+        "#affc41", #zielony jasny
+        "#ef233c",  # czerwony
+        "#F7FD04", #zolty
+        "#F9B208", #pomarancz
+        "#4cc9f0", #niebieski
+        "#FF00E4",  # rozowy
+        "#9d4edd", #fioletowy
+        "#0028FF", #mocny niebieski
+        "#00f5d4", #niebieski
+        "#25a18e" #zielony
 ]
