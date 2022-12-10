@@ -4,7 +4,7 @@ from functools import partial
 
 from src.configuration.config import DEFAULT, DEFAULT_TASK_VALUES, T_MAX, T_MIN, N
 
-from src.configuration.config import WINDOW_HEIGHT, WINDOW_WIDTH, COLOR_PALETTE, BUTTON_SIZE, LINE_EDIT_SIZE, TASK_LABEL_WIDTH, APP_BG_COLOR, BUTTON_COLOR
+from src.configuration.config import WINDOW_HEIGHT, WINDOW_WIDTH, COLOR_PALETTE, EMPTY_COLOR, BUTTON_SIZE, LINE_EDIT_SIZE, TASK_LABEL_WIDTH, APP_BG_COLOR, BUTTON_COLOR
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
@@ -188,7 +188,7 @@ class LiuWindow(QMainWindow):
         for el in range(tasks_number):
             execution_time = random.randint(min_time, max_time)
             release_time = random.randint(min_time, max_time)
-            deadline = release_time + execution_time + random.randint(min_time, max_time)
+            deadline = release_time + execution_time + 3*random.randint(min_time, max_time)
 
             tasks_list.append(Task(p=execution_time, r=release_time, d=deadline))
         print("[End]   create_tasks")
@@ -287,6 +287,8 @@ class LiuWindow(QMainWindow):
                 if chosen_task.current_execution_time == chosen_task.execution_time:
                     chosen_task.not_done = False
                     chosen_task.stop_time = T + 1  # +1 because task was executed for 1 time unit
+            else:
+                tasks_exec_order.append("--")
 
             # end of the loop
             T += 1
@@ -318,13 +320,20 @@ class LiuWindow(QMainWindow):
         print("[End]   fill_output_grid")
 
     def fill_graph_layout(self, tasks_exec_order, lmax):
+        print("[Start] fill_graph_layout")
         for idx, task in enumerate(tasks_exec_order):
+            # add task to tasks row
             graph_cell = QLabel(f"<h2>{str(task)}</h2>")
             graph_cell.setAlignment(Qt.AlignmentFlag.AlignCenter)
             # graph_cell.setFixedWidth(TASK_LABEL_WIDTH)
-            graph_cell.setStyleSheet(f"background-color: {task.task_color}")
+            if isinstance(task, Task):
+                graph_cell.setStyleSheet(f"background-color: {task.task_color}")
+            if isinstance(task, str):
+                graph_cell.setStyleSheet(f"background-color: {EMPTY_COLOR}")
             self.graph_values_layout.addWidget(graph_cell, 0, idx)
+
         self.graph_quarter_layout.addWidget(QLabel(f"<h2>L<sub>max</sub>: {lmax}</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
+        print("[End]   fill_graph_layout")
 
     def order_tasks(self):
         # run Liu algorithm
@@ -341,7 +350,7 @@ class LiuWindow(QMainWindow):
             tasks_print_table.append(task_row)
         # print data
         self.fill_output_grid(tasks_print_table)
-        print(tasks_exec_order)
+        print(f"Tasks order: {tasks_exec_order}")
         self.fill_graph_layout(tasks_exec_order, lmax)
 
     def _connect_signals_and_slots(self):

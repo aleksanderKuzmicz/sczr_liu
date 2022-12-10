@@ -34,3 +34,4 @@ COLOR_PALETTE = [
         "#00f5d4", #niebieski
         "#25a18e" #zielony
 ]
+EMPTY_COLOR = "grey"
