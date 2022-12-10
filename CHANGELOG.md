@@ -1,3 +1,15 @@
+# 1.0.6
+
+## Fixed
+
+## Changed
+
+- App's window size changed to 1600 to handle max (=10) amount of tasks.
+
+## Added
+
+- button to create default tasks
+
 # 1.0.5
 
 ## Fixed

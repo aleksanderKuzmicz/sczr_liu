@@ -1,5 +1,6 @@
 import sys
 import random
+from functools import partial
 
 from src.configuration.config import DEFAULT, DEFAULT_TASK_VALUES, T_MAX, T_MIN, N
 
@@ -94,11 +95,15 @@ class LiuWindow(QMainWindow):
         user_input_widget.setLayout(user_input_layout)
 
         # buttons
-        self.button_fill_input = QPushButton("Fill input values table")
+        self.button_user = QPushButton("Create tasks")
+        self.button_default = QPushButton("Create default tasks")
         self.button_run_alg = QPushButton("Order tasks")
-        self.button_fill_input.setFixedWidth(BUTTON_SIZE)
+
+        self.button_user.setFixedWidth(BUTTON_SIZE)
+        self.button_default.setFixedWidth(BUTTON_SIZE)
         self.button_run_alg.setFixedWidth(BUTTON_SIZE)
-        self.button_fill_input.setStyleSheet(f"background-color:{BUTTON_COLOR};border-radius:30px;border-width:2px;border-color:black")
+        self.button_user.setStyleSheet(f"background-color:{BUTTON_COLOR};border-radius:30px;border-width:2px;border-color:black")
+        self.button_default.setStyleSheet(f"background-color: {BUTTON_COLOR}")
         self.button_run_alg.setStyleSheet(f"background-color: {BUTTON_COLOR}")
 
         # add user input layout to user quarter layout
@@ -106,7 +111,8 @@ class LiuWindow(QMainWindow):
         self.user_quarter_layout.addWidget(QLabel("<h1>Algorithm Liu</h1>"), alignment=Qt.AlignmentFlag.AlignCenter)
         self.user_quarter_layout.addWidget(QLabel("<h2>1 | r<sub>i</sub>, prm | L<sub>max</sub></h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
         self.user_quarter_layout.addWidget(user_input_widget, alignment=Qt.AlignmentFlag.AlignCenter)
-        self.user_quarter_layout.addWidget(self.button_fill_input, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.user_quarter_layout.addWidget(self.button_user, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.user_quarter_layout.addWidget(self.button_default, alignment=Qt.AlignmentFlag.AlignCenter)
         self.user_quarter_layout.addWidget(self.button_run_alg, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # add user's layout to user widget
@@ -173,7 +179,10 @@ class LiuWindow(QMainWindow):
         print(f"[End] get_user_values, returning: {user_values}")
         return user_values
 
-    def create_tasks(self, min_time, max_time, tasks_number):
+    def create_tasks(self, **kwargs):
+        min_time = kwargs["min_time"]
+        max_time = kwargs["max_time"]
+        tasks_number = kwargs["tasks_number"]
         print("[Start] create_tasks")
         tasks_list = []
         for el in range(tasks_number):
@@ -185,7 +194,8 @@ class LiuWindow(QMainWindow):
         print("[End]   create_tasks")
         return tasks_list
 
-    def create_tasks_default(self, values):
+    def create_tasks_default(self, **kwargs):
+        values = kwargs["values"]
         print("[start] Model: create_tasks_default")
         tasks_list = [Task(p=el[0], r=el[1], d=el[2]) for el in values]
         print("[end]   Model: create_tasks_default")
@@ -218,18 +228,22 @@ class LiuWindow(QMainWindow):
         print("[End]   fill_input_grid")
         # super().show()
 
-    def generate_input(self):
+    def generate_input(self, creation_method):
         print("[Start] generate_input")
-        user_values = self.get_user_values()
-        self.tasks_list = self.create_tasks(
-            min_time=user_values.get("min_time"),
-            max_time=user_values.get("max_time"),
-            tasks_number=user_values.get("tasks_number")
-        )
-        # Plan B - start - use default values
-        # self.tasks_list = self.create_tasks_default(DEFAULT_TASK_VALUES)
-        # Plan B - end
-        # prepare data for printing
+        if creation_method == self.create_tasks:
+            print("Creation method is: user method")
+            user_values = self.get_user_values()
+            self.tasks_list = creation_method(
+                min_time=user_values.get("min_time"),
+                max_time=user_values.get("max_time"),
+                tasks_number=user_values.get("tasks_number")
+            )
+        elif creation_method == self.create_tasks_default:
+            print("Creation method is: default method")
+            self.tasks_list = creation_method(values=DEFAULT_TASK_VALUES)
+        else:
+            raise Exception(f"Given tasks creation method:\n\t{creation_method}\nis not a user creation method:\n\t{self.create_tasks}\nand not a default creation method:\n\t{self.create_tasks_default}")
+
         tasks_print_table = []
         for task in self.tasks_list:
             task_row = [task, task.execution_time, task.release_time, task.deadline]
@@ -330,7 +344,8 @@ class LiuWindow(QMainWindow):
         self.fill_graph_layout(tasks_exec_order, lmax)
 
     def _connect_signals_and_slots(self):
-        self.button_fill_input.clicked.connect(self.generate_input)
+        self.button_user.clicked.connect(partial(self.generate_input, self.create_tasks))
+        self.button_default.clicked.connect(partial(self.generate_input, self.create_tasks_default))
         self.button_run_alg.clicked.connect(self.order_tasks)
 
 
