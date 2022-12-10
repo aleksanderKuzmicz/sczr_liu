@@ -2,6 +2,8 @@
 
 ## Fixed
 
+- Setting "start time" for tasks. Used "==" instead if "is"
+
 ## Changed
 
 - App's window size changed to 1600 to handle max (=10) amount of tasks.

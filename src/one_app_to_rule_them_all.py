@@ -277,7 +277,8 @@ class LiuWindow(QMainWindow):
                 print(f"running: {chosen_task}")
                 tasks_exec_order.append(chosen_task)
                 # set "start" time for chosen task (if not set only)
-                if not chosen_task.start_time:
+                if chosen_task.start_time is None:
+                    print(f"task {chosen_task}, setting start time to: {T}")
                     chosen_task.start_time = T
                 # run task for 1s
                 chosen_task.current_execution_time += 1
@@ -330,7 +331,7 @@ class LiuWindow(QMainWindow):
         tasks_exec_order = self.perform_alg(self.tasks_list)
         # get tasks Li values
         for task in self.tasks_list:
-            task.delay = task.stop_time - task.deadline
+            task.delay = task.stop_time - task.deadline if task.stop_time > task.deadline else 0
         # get Lmax
         lmax = max(task.delay for task in self.tasks_list)
         # prepare data for printing
