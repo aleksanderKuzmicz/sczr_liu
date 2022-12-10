@@ -1,5 +1,4 @@
 # ALG
-DEFAULT = True
 DEFAULT_TASK_VALUES = [
         [2, 4, 7],
         [1, 1, 2],

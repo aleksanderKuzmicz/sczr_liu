@@ -2,8 +2,7 @@ import sys
 import random
 from functools import partial
 
-from src.configuration.config import DEFAULT, DEFAULT_TASK_VALUES, T_MAX, T_MIN, N
-
+from src.configuration.config import DEFAULT_TASK_VALUES
 from src.configuration.config import WINDOW_HEIGHT, WINDOW_WIDTH, COLOR_PALETTE, EMPTY_COLOR, BUTTON_SIZE, LINE_EDIT_SIZE, TASK_LABEL_WIDTH, APP_BG_COLOR, BUTTON_COLOR
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -14,7 +13,6 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QLabel,
     QVBoxLayout,
-    QHBoxLayout,
     QGridLayout,
     QFormLayout,
 )
@@ -116,10 +114,6 @@ class LiuWindow(QMainWindow):
         self.user_quarter_layout.addWidget(self.button_run_alg, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # add user's layout to user widget
-        # add user widget to general layout
-        # ####user_widget = QWidget()
-        # ####user_widget.setLayout(self.user_quarter_layout)
-        # ####self.general_layout.addWidget(user_widget, 0, 0)
         self.general_layout.addLayout(self.user_quarter_layout, 0, 0, alignment=Qt.AlignmentFlag.AlignCenter)
 
     def _set_input_quarter(self):
@@ -134,13 +128,7 @@ class LiuWindow(QMainWindow):
         self.input_quarter_layout.addWidget(QLabel("<h2>Input values</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
         self.input_quarter_layout.addWidget(input_values_widget, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        # self.user_quarter_layout.addLayout(self.input_values_layout)
-
         # add input layout to input widget
-        # add input widget to general layout
-        # #### input_widget = QWidget()
-        # #### input_widget.setLayout(self.input_quarter_layout)
-        # #### self.general_layout.addWidget(input_widget, 1, 0)
         self.general_layout.addLayout(self.input_quarter_layout, 1, 0)
 
     def _set_output_quarter(self):
@@ -187,8 +175,8 @@ class LiuWindow(QMainWindow):
         tasks_list = []
         for el in range(tasks_number):
             execution_time = random.randint(min_time, max_time)
-            release_time = random.randint(min_time, max_time)
-            deadline = release_time + execution_time + 3*random.randint(min_time, max_time)
+            release_time = random.randint(min_time, 2*max_time)
+            deadline = release_time + execution_time + random.randint(min_time, max_time)
 
             tasks_list.append(Task(p=execution_time, r=release_time, d=deadline))
         print("[End]   create_tasks")
@@ -288,7 +276,7 @@ class LiuWindow(QMainWindow):
                     chosen_task.not_done = False
                     chosen_task.stop_time = T + 1  # +1 because task was executed for 1 time unit
             else:
-                tasks_exec_order.append("--")
+                tasks_exec_order.append("---")
 
             # end of the loop
             T += 1
@@ -331,6 +319,11 @@ class LiuWindow(QMainWindow):
             if isinstance(task, str):
                 graph_cell.setStyleSheet(f"background-color: {EMPTY_COLOR}")
             self.graph_values_layout.addWidget(graph_cell, 0, idx)
+
+            # add time index
+            time_label = QLabel(f"<p>{idx}</p>")
+            time_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+            self.graph_values_layout.addWidget(time_label, 1, idx)
 
         self.graph_quarter_layout.addWidget(QLabel(f"<h2>L<sub>max</sub>: {lmax}</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
         print("[End]   fill_graph_layout")

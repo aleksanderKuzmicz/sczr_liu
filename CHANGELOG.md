@@ -13,6 +13,7 @@
 
 - button to create default tasks
 - empty places in execution graph, when no tasks were executed
+- add timeline
 
 # 1.0.5
 
