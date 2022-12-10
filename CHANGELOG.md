@@ -2,6 +2,9 @@
 
 ## Fixed
 
+- Setting "start time" for tasks. Used "==" instead if "is"
+- L value calculation. No more negative values
+
 ## Changed
 
 - App's window size changed to 1600 to handle max (=10) amount of tasks.
@@ -9,6 +12,8 @@
 ## Added
 
 - button to create default tasks
+- empty places in execution graph, when no tasks were executed
+- add timeline
 
 # 1.0.5
 
