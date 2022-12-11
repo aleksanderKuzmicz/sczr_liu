@@ -6,7 +6,8 @@
 
 ## Added
 
-- Validation for user's parameters
+- Validation for user's parameters: min_time [0; 1], max_time [1; 30], tasks_number [1;10]
+- App can be used for more tasks.
 
 # 1.0.6
 

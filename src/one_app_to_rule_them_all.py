@@ -96,23 +96,27 @@ class LiuWindow(QMainWindow):
         user_input_widget.setLayout(user_input_layout)
 
         # buttons
+        self.button_clear = QPushButton("Clear all")
         self.button_user = QPushButton("Create tasks")
         self.button_default = QPushButton("Create default tasks")
         self.button_run_alg = QPushButton("Order tasks")
 
-        # invalid params label
-        self.invalid_params_label = QLabel("")
-        self.invalid_params_label.setStyleSheet("font-size:15px; color:red")
-
+        self.button_clear.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
         self.button_user.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
         self.button_default.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
         self.button_run_alg.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
+        self.button_clear.setStyleSheet(
+            "font-size:15px; font-weight:bold; border-radius : 5; background-color: #DE3163; color:white; border-bottom: 1px solid grey; border-right:1px solid grey;")
         self.button_user.setStyleSheet(
             "font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
         self.button_default.setStyleSheet(
             "font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
         self.button_run_alg.setStyleSheet(
             "font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
+
+        # invalid params label
+        self.invalid_params_label = QLabel("")
+        self.invalid_params_label.setStyleSheet("font-size:15px; color:red")
 
         # add user input layout to user quarter layout
         self.user_quarter_layout = QVBoxLayout()
@@ -123,6 +127,7 @@ class LiuWindow(QMainWindow):
         self.user_quarter_layout.addWidget(self.button_user, alignment=Qt.AlignmentFlag.AlignCenter)
         self.user_quarter_layout.addWidget(self.button_default, alignment=Qt.AlignmentFlag.AlignCenter)
         self.user_quarter_layout.addWidget(self.button_run_alg, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.user_quarter_layout.addWidget(self.button_clear, alignment=Qt.AlignmentFlag.AlignCenter)
         self.user_quarter_layout.addWidget(self.invalid_params_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # add user's layout to user widget
@@ -169,9 +174,15 @@ class LiuWindow(QMainWindow):
         graph_scroll.setFrameShape(QFrame.Shape.NoFrame)
         graph_scroll.setWidget(graph_values_widget)
 
+        # Lmax
+        self.lmax_label = QLabel("")
+        # self.lmax_label.setStyleSheet("font-size:15px")
+
+
         self.graph_quarter_layout = QVBoxLayout()
         self.graph_quarter_layout.addWidget(QLabel("<h2>Graph</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
         self.graph_quarter_layout.addWidget(graph_scroll, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.graph_quarter_layout.addWidget(self.lmax_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.general_layout.addLayout(self.graph_quarter_layout, 1, 1)
 
@@ -197,7 +208,9 @@ class LiuWindow(QMainWindow):
         if user_values['min_time'].isnumeric() and \
                 user_values['max_time'].isnumeric() and \
                 user_values['tasks_number'].isnumeric() and \
-                int(user_values['tasks_number']) <= 10:
+                0 <= int(user_values['min_time']) <= 10 and \
+                0 < int(user_values['max_time']) <= 30 and \
+                0 < int(user_values['tasks_number']) <= 10:
             print("Validation - returning TRUE")
             return True
         else:
@@ -207,6 +220,10 @@ class LiuWindow(QMainWindow):
     def _convert_values_to_int(self, values):
         return {key: int(value) for key, value in values.items()}
 
+    def _clear_layout(self, layout):
+        for i in reversed(range(layout.count())):
+            layout.itemAt(i).widget().setParent(None)
+
     def create_tasks(self, **kwargs):
         min_time = kwargs["min_time"]
         max_time = kwargs["max_time"]
@@ -214,7 +231,7 @@ class LiuWindow(QMainWindow):
         print("[Start] create_tasks")
         tasks_list = []
         for el in range(tasks_number):
-            execution_time = random.randint(min_time, int(max_time / 3))
+            execution_time = random.randint(min_time, int(max_time / 3)) + 1
             release_time = random.randint(min_time, max_time)
             deadline = release_time + execution_time + int(3 / 2 * random.randint(min_time, int(max_time / 3)))
 
@@ -230,8 +247,14 @@ class LiuWindow(QMainWindow):
 
         return tasks_list
 
-    def fill_input_grid(self, tasks_list):
+    def fill_input_grid(self):
         print("[Start] fill_input_grid")
+
+        tasks_print_table = []
+        for task in self.tasks_list:
+            task_row = [task, task.execution_time, task.release_time, task.deadline]
+            tasks_print_table.append(task_row)
+
         tasks_n_label = QLabel("<h2>Task</h2>")
         p_label = QLabel("<h2>p</h2>")
         r_label = QLabel("<h2>r</h2>")
@@ -245,7 +268,7 @@ class LiuWindow(QMainWindow):
         self.input_values_layout.addWidget(r_label, 0, 2)
         self.input_values_layout.addWidget(d_label, 0, 3)
 
-        for row, task in enumerate(tasks_list):
+        for row, task in enumerate(tasks_print_table):
             color = task[0].task_color
             for col, task_parameter in enumerate(task):
                 parameter = QLabel(f"{str(task_parameter)}")
@@ -258,6 +281,13 @@ class LiuWindow(QMainWindow):
 
     def generate_input(self, creation_method):
         print("[Start] generate_input")
+        # clean up
+        self._delete_tasks()
+        self._clear_layout(self.input_values_layout)
+        self._clear_layout(self.output_values_layout)
+        self._clear_layout(self.graph_values_layout)
+        self.lmax_label.setText(f"")
+
         if creation_method == self.create_tasks:
             user_values = self.get_user_values()
             validation_pass = self._validate_user_values(user_values)
@@ -274,17 +304,9 @@ class LiuWindow(QMainWindow):
                 self.invalid_params_label.setText("Invalid parameters! Try again.")
         elif creation_method == self.create_tasks_default:
             self.tasks_list = creation_method(values=DEFAULT_TASK_VALUES)
-        else:
-            raise Exception(
-                f"Given tasks creation method:\n\t{creation_method}\nis not a user creation method:\n\t{self.create_tasks}\nand not a default creation method:\n\t{self.create_tasks_default}")
 
-        # TODO: move below to "fill_input_grid" method
         if self.tasks_list:
-            tasks_print_table = []
-            for task in self.tasks_list:
-                task_row = [task, task.execution_time, task.release_time, task.deadline]
-                tasks_print_table.append(task_row)
-            self.fill_input_grid(tasks_print_table)
+            self.fill_input_grid()
         print("[End]   generate_input")
 
     def perform_alg(self, tasks):
@@ -372,11 +394,13 @@ class LiuWindow(QMainWindow):
             time_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
             self.graph_values_layout.addWidget(time_label, 1, idx)
 
-        self.graph_quarter_layout.addWidget(QLabel(f"<h2>L<sub>max</sub>= {lmax}</h2>"),
-                                            alignment=Qt.AlignmentFlag.AlignCenter)
+        self.lmax_label.setText(f"<h2>L<sub>max</sub>= {lmax}</h2>")
         print("[End]   fill_graph_layout")
 
     def order_tasks(self):
+        self._clear_layout(self.output_values_layout)
+        self._clear_layout(self.graph_values_layout)
+        self.lmax_label.setText(f"")
         # run Liu algorithm
         tasks_exec_order = self.perform_alg(self.tasks_list)
         # get tasks Li values
@@ -394,10 +418,32 @@ class LiuWindow(QMainWindow):
         print(f"Tasks order: {tasks_exec_order}")
         self.fill_graph_layout(tasks_exec_order, lmax)
 
+        # clean up
+        self._delete_tasks()
+
+    def _delete_tasks(self):
+        if self.tasks_list:
+            for task_obj in self.tasks_list:
+                print(f"Delete task {task_obj}")
+                del task_obj
+        self.tasks_list = None
+        Task.task_number = 0
+
+    def clear(self):
+        print("[Start] clear")
+        self._delete_tasks()
+        self._clear_user_values()
+        self._clear_layout(self.input_values_layout)
+        self._clear_layout(self.output_values_layout)
+        self._clear_layout(self.graph_values_layout)
+        self.lmax_label.setText(f"")
+        print("[End]   clear")
+
     def _connect_signals_and_slots(self):
         self.button_user.clicked.connect(partial(self.generate_input, self.create_tasks))
         self.button_default.clicked.connect(partial(self.generate_input, self.create_tasks_default))
         self.button_run_alg.clicked.connect(self.order_tasks)
+        self.button_clear.clicked.connect(self.clear)
 
 
 if __name__ == "__main__":
