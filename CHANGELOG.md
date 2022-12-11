@@ -8,6 +8,7 @@
 ## Changed
 
 - App's window size changed to 1600 to handle max (=10) amount of tasks.
+- Remove graph scroller border.
 
 ## Added
 
