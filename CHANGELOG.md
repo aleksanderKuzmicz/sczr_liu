@@ -1,3 +1,13 @@
+# 1.0.7
+
+## Fixed
+
+## Changed
+
+## Added
+
+- Validation for user's parameters
+
 # 1.0.6
 
 ## Fixed
