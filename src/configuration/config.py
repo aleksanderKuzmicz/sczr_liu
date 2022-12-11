@@ -21,7 +21,7 @@ LINE_EDIT_SIZE = 200
 TASK_LABEL_WIDTH = 100
 # colors
 APP_BG_COLOR = "#FFFFFF"
-BUTTON_COLOR = "#E2EAFC"
+BUTTON_COLOR = "#cfeafb"
 # 10 colors max
 COLOR_PALETTE = [
         "#affc41", #zielony jasny

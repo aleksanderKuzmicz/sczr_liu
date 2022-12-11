@@ -331,7 +331,7 @@ class LiuWindow(QMainWindow):
             time_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
             self.graph_values_layout.addWidget(time_label, 1, idx)
 
-        self.graph_quarter_layout.addWidget(QLabel(f"<h2>L<sub>max</sub>: {lmax}</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
+        self.graph_quarter_layout.addWidget(QLabel(f"<h2>L<sub>max</sub>= {lmax}</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
         print("[End]   fill_graph_layout")
 
     def order_tasks(self):
