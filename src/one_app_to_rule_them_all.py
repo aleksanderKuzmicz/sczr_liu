@@ -101,9 +101,9 @@ class LiuWindow(QMainWindow):
         self.button_user.setFixedWidth(BUTTON_SIZE)
         self.button_default.setFixedWidth(BUTTON_SIZE)
         self.button_run_alg.setFixedWidth(BUTTON_SIZE)
-        self.button_user.setStyleSheet(f"background-color:{BUTTON_COLOR};border-radius:30px;border-width:2px;border-color:black")
-        self.button_default.setStyleSheet(f"background-color: {BUTTON_COLOR}")
-        self.button_run_alg.setStyleSheet(f"background-color: {BUTTON_COLOR}")
+        self.button_user.setStyleSheet("border-radius : 5; background-color: #cfeafb; color:grey")
+        self.button_default.setStyleSheet("border-radius : 5; background-color: #cfeafb; color:grey")
+        self.button_run_alg.setStyleSheet("border-radius : 5; background-color: #cfeafb; color:grey")
 
         # add user input layout to user quarter layout
         self.user_quarter_layout = QVBoxLayout()
