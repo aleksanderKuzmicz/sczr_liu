@@ -88,9 +88,9 @@ class LiuWindow(QMainWindow):
 
         # layout for user's input
         user_input_layout = QFormLayout()
-        user_input_layout.addRow("Minimum time:", self.user_min_time)
-        user_input_layout.addRow("Maximum time:", self.user_max_time)
-        user_input_layout.addRow("Tasks number:", self.user_tasks_number)
+        user_input_layout.addRow("<p style=\"font-size:15px\">Minimum time:</p>", self.user_min_time)
+        user_input_layout.addRow("<p style=\"font-size:15px\">Maximum time:</p>", self.user_max_time)
+        user_input_layout.addRow("<p style=\"font-size:15px\">Tasks number:</p>", self.user_tasks_number)
         user_input_widget = QWidget()
         user_input_widget.setLayout(user_input_layout)
 
