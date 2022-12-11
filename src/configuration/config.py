@@ -16,23 +16,24 @@ WINDOW_HEIGHT = 700
 WINDOW_WIDTH = 1300
 SCROLL_HEIGHT = 100
 SCROLL_WIDTH = 500
-BUTTON_SIZE = 200
+BUTTON_WIDTH = 200
+BUTTON_HEIGHT = 25
 LINE_EDIT_SIZE = 100
 TASK_LABEL_WIDTH = 100
 # colors
 APP_BG_COLOR = "#FFFFFF"
-BUTTON_COLOR = "#E2EAFC"
+BUTTON_COLOR = "#cfeafb"
 # 10 colors max
 COLOR_PALETTE = [
         "#affc41", #zielony jasny
-        "#ef233c",  # czerwony
+        "#FF2400",  # czerwony
         "#F7FD04", #zolty
         "#F9B208", #pomarancz
         "#4cc9f0", #niebieski
-        "#FF00E4",  # rozowy
-        "#9d4edd", #fioletowy
-        "#0028FF", #mocny niebieski
-        "#00f5d4", #niebieski
-        "#25a18e" #zielony
+        "#CF9FFF",  # liliowy
+        "#9d4edd",  # fioletowy
+        "#0096FF", #mocny niebieski
+        "#0FFF50",  # zielony
+        "#DE3163" #niebieski
 ]
 EMPTY_COLOR = "grey"
