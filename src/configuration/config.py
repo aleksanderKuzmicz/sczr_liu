@@ -25,14 +25,14 @@ BUTTON_COLOR = "#E2EAFC"
 # 10 colors max
 COLOR_PALETTE = [
         "#affc41", #zielony jasny
-        "#ef233c",  # czerwony
+        "#FF2400",  # czerwony
         "#F7FD04", #zolty
         "#F9B208", #pomarancz
         "#4cc9f0", #niebieski
-        "#FF00E4",  # rozowy
-        "#9d4edd", #fioletowy
-        "#0028FF", #mocny niebieski
-        "#00f5d4", #niebieski
-        "#25a18e" #zielony
+        "#CF9FFF",  # liliowy
+        "#9d4edd",  # fioletowy
+        "#0096FF", #mocny niebieski
+        "#0FFF50",  # zielony
+        "#DE3163" #niebieski
 ]
 EMPTY_COLOR = "grey"
