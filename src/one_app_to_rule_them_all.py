@@ -16,6 +16,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QGridLayout,
     QFormLayout,
+    QFrame
 )
 
 
@@ -87,9 +88,9 @@ class LiuWindow(QMainWindow):
 
         # layout for user's input
         user_input_layout = QFormLayout()
-        user_input_layout.addRow("Minimum time:", self.user_min_time)
-        user_input_layout.addRow("Maximum time:", self.user_max_time)
-        user_input_layout.addRow("Tasks number:", self.user_tasks_number)
+        user_input_layout.addRow("<p style=\"font-size:15px\">Minimum time:</p>", self.user_min_time)
+        user_input_layout.addRow("<p style=\"font-size:15px\">Maximum time:</p>", self.user_max_time)
+        user_input_layout.addRow("<p style=\"font-size:15px\">Tasks number:</p>", self.user_tasks_number)
         user_input_widget = QWidget()
         user_input_widget.setLayout(user_input_layout)
 
@@ -155,6 +156,7 @@ class LiuWindow(QMainWindow):
         graph_scroll = QScrollArea()
         graph_scroll.setWidgetResizable(True)
         graph_scroll.setFixedSize(SCROLL_WIDTH, SCROLL_HEIGHT)
+        graph_scroll.setFrameShape(QFrame.Shape.NoFrame)
         graph_scroll.setWidget(graph_values_widget)
 
         self.graph_quarter_layout = QVBoxLayout()
@@ -180,9 +182,9 @@ class LiuWindow(QMainWindow):
         print("[Start] create_tasks")
         tasks_list = []
         for el in range(tasks_number):
-            execution_time = random.randint(min_time, max_time)
+            execution_time = random.randint(min_time, int(max_time/3))
             release_time = random.randint(min_time, max_time)
-            deadline = release_time + execution_time - random.randint(min_time, max_time)
+            deadline = release_time + execution_time + int(3 / 2 * random.randint(min_time, int(max_time/3)))
 
             tasks_list.append(Task(p=execution_time, r=release_time, d=deadline))
         print("[End]   create_tasks")
