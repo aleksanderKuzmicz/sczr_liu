@@ -3,7 +3,7 @@ import random
 from functools import partial
 
 from src.configuration.config import DEFAULT_TASK_VALUES
-from src.configuration.config import WINDOW_HEIGHT, WINDOW_WIDTH, SCROLL_HEIGHT, SCROLL_WIDTH, COLOR_PALETTE, EMPTY_COLOR, BUTTON_SIZE, LINE_EDIT_SIZE, TASK_LABEL_WIDTH, APP_BG_COLOR, BUTTON_COLOR
+from src.configuration.config import WINDOW_HEIGHT, WINDOW_WIDTH, SCROLL_HEIGHT, SCROLL_WIDTH, COLOR_PALETTE, EMPTY_COLOR, BUTTON_WIDTH, BUTTON_HEIGHT, LINE_EDIT_SIZE, TASK_LABEL_WIDTH, APP_BG_COLOR, BUTTON_COLOR
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
@@ -98,12 +98,12 @@ class LiuWindow(QMainWindow):
         self.button_default = QPushButton("Create default tasks")
         self.button_run_alg = QPushButton("Order tasks")
 
-        self.button_user.setFixedWidth(BUTTON_SIZE)
-        self.button_default.setFixedWidth(BUTTON_SIZE)
-        self.button_run_alg.setFixedWidth(BUTTON_SIZE)
-        self.button_user.setStyleSheet(f"background-color:{BUTTON_COLOR};border-radius:30px;border-width:2px;border-color:black")
-        self.button_default.setStyleSheet(f"background-color: {BUTTON_COLOR}")
-        self.button_run_alg.setStyleSheet(f"background-color: {BUTTON_COLOR}")
+        self.button_user.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
+        self.button_default.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
+        self.button_run_alg.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
+        self.button_user.setStyleSheet("font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
+        self.button_default.setStyleSheet("font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
+        self.button_run_alg.setStyleSheet("font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
 
         # add user input layout to user quarter layout
         self.user_quarter_layout = QVBoxLayout()
@@ -214,10 +214,10 @@ class LiuWindow(QMainWindow):
         for row, task in enumerate(tasks_list):
             color = task[0].task_color
             for col, task_parameter in enumerate(task):
-                parameter = QLabel(f"<h2>{str(task_parameter)}</h2>")
+                parameter = QLabel(f"{str(task_parameter)}")
                 parameter.setAlignment(Qt.AlignmentFlag.AlignCenter)
                 parameter.setFixedWidth(TASK_LABEL_WIDTH)
-                parameter.setStyleSheet(f"background-color: {color}")
+                parameter.setStyleSheet(f"font-size:20px; background-color: {color}")
                 self.input_values_layout.addWidget(parameter, row + 1, col)
         print("[End]   fill_input_grid")
         # super().show()
@@ -306,10 +306,10 @@ class LiuWindow(QMainWindow):
         for row, task in enumerate(tasks_list):
             color = task[0].task_color
             for col, task_parameter in enumerate(task):
-                parameter = QLabel(f"<h2>{str(task_parameter)}</h2>")
+                parameter = QLabel(f"{str(task_parameter)}")
                 parameter.setAlignment(Qt.AlignmentFlag.AlignCenter)
                 parameter.setFixedWidth(TASK_LABEL_WIDTH)
-                parameter.setStyleSheet(f"background-color: {color}")
+                parameter.setStyleSheet(f"background-color: {color}; font-size:20px")
                 self.output_values_layout.addWidget(parameter, row + 1, col)
         print("[End]   fill_output_grid")
 
@@ -331,7 +331,7 @@ class LiuWindow(QMainWindow):
             time_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
             self.graph_values_layout.addWidget(time_label, 1, idx)
 
-        self.graph_quarter_layout.addWidget(QLabel(f"<h2>L<sub>max</sub>: {lmax}</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
+        self.graph_quarter_layout.addWidget(QLabel(f"<h2>L<sub>max</sub>= {lmax}</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
         print("[End]   fill_graph_layout")
 
     def order_tasks(self):
