@@ -3,7 +3,8 @@ import random
 from functools import partial
 
 from src.configuration.config import DEFAULT_TASK_VALUES
-from src.configuration.config import WINDOW_HEIGHT, WINDOW_WIDTH, SCROLL_HEIGHT, SCROLL_WIDTH, COLOR_PALETTE, EMPTY_COLOR, BUTTON_WIDTH, BUTTON_HEIGHT, LINE_EDIT_SIZE, TASK_LABEL_WIDTH, APP_BG_COLOR, BUTTON_COLOR
+from src.configuration.config import WINDOW_HEIGHT, WINDOW_WIDTH, SCROLL_HEIGHT, SCROLL_WIDTH, COLOR_PALETTE, \
+    EMPTY_COLOR, BUTTON_WIDTH, BUTTON_HEIGHT, LINE_EDIT_SIZE, TASK_LABEL_WIDTH, APP_BG_COLOR, BUTTON_COLOR
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
@@ -95,25 +96,39 @@ class LiuWindow(QMainWindow):
         user_input_widget.setLayout(user_input_layout)
 
         # buttons
+        self.button_clear = QPushButton("Clear all")
         self.button_user = QPushButton("Create tasks")
         self.button_default = QPushButton("Create default tasks")
         self.button_run_alg = QPushButton("Order tasks")
 
+        self.button_clear.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
         self.button_user.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
         self.button_default.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
         self.button_run_alg.setFixedSize(BUTTON_WIDTH, BUTTON_HEIGHT)
-        self.button_user.setStyleSheet("font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
-        self.button_default.setStyleSheet("font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
-        self.button_run_alg.setStyleSheet("font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
+        self.button_clear.setStyleSheet(
+            "font-size:15px; font-weight:bold; border-radius : 5; background-color: #DE3163; color:white; border-bottom: 1px solid grey; border-right:1px solid grey;")
+        self.button_user.setStyleSheet(
+            "font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
+        self.button_default.setStyleSheet(
+            "font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
+        self.button_run_alg.setStyleSheet(
+            "font-size:15px; border-radius : 5; background-color: #cfeafb; color:black; border-bottom: 1px solid grey; border-right:1px solid grey;")
+
+        # invalid params label
+        self.invalid_params_label = QLabel("")
+        self.invalid_params_label.setStyleSheet("font-size:15px; color:red")
 
         # add user input layout to user quarter layout
         self.user_quarter_layout = QVBoxLayout()
         self.user_quarter_layout.addWidget(QLabel("<h1>Algorithm Liu</h1>"), alignment=Qt.AlignmentFlag.AlignCenter)
-        self.user_quarter_layout.addWidget(QLabel("<h2>1 | r<sub>i</sub>, prm | L<sub>max</sub></h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
+        self.user_quarter_layout.addWidget(QLabel("<h2>1 | r<sub>i</sub>, prm | L<sub>max</sub></h2>"),
+                                           alignment=Qt.AlignmentFlag.AlignCenter)
         self.user_quarter_layout.addWidget(user_input_widget, alignment=Qt.AlignmentFlag.AlignCenter)
         self.user_quarter_layout.addWidget(self.button_user, alignment=Qt.AlignmentFlag.AlignCenter)
         self.user_quarter_layout.addWidget(self.button_default, alignment=Qt.AlignmentFlag.AlignCenter)
         self.user_quarter_layout.addWidget(self.button_run_alg, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.user_quarter_layout.addWidget(self.button_clear, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.user_quarter_layout.addWidget(self.invalid_params_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # add user's layout to user widget
         self.general_layout.addLayout(self.user_quarter_layout, 0, 0, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -159,21 +174,55 @@ class LiuWindow(QMainWindow):
         graph_scroll.setFrameShape(QFrame.Shape.NoFrame)
         graph_scroll.setWidget(graph_values_widget)
 
+        # Lmax
+        self.lmax_label = QLabel("")
+        # self.lmax_label.setStyleSheet("font-size:15px")
+
+
         self.graph_quarter_layout = QVBoxLayout()
         self.graph_quarter_layout.addWidget(QLabel("<h2>Graph</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
         self.graph_quarter_layout.addWidget(graph_scroll, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.graph_quarter_layout.addWidget(self.lmax_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.general_layout.addLayout(self.graph_quarter_layout, 1, 1)
+
+    def _clear_user_values(self):
+        print("[Start] _clear_user_values")
+        self.user_min_time.setText("")
+        self.user_max_time.setText("")
+        self.user_tasks_number.setText("")
+        self.user_min_time.setFocus()
+        print("[End]   _clear_user_values")
 
     def get_user_values(self) -> dict:
         print("[Start] get_user_values")
         user_values = {
-            "min_time": int(self.user_min_time.text()),
-            "max_time": int(self.user_max_time.text()),
-            "tasks_number": int(self.user_tasks_number.text())
+            "min_time": self.user_min_time.text(),
+            "max_time": self.user_max_time.text(),
+            "tasks_number": self.user_tasks_number.text()
         }
         print(f"[End] get_user_values, returning: {user_values}")
         return user_values
+
+    def _validate_user_values(self, user_values):
+        if user_values['min_time'].isnumeric() and \
+                user_values['max_time'].isnumeric() and \
+                user_values['tasks_number'].isnumeric() and \
+                0 <= int(user_values['min_time']) <= 10 and \
+                0 < int(user_values['max_time']) <= 30 and \
+                0 < int(user_values['tasks_number']) <= 10:
+            print("Validation - returning TRUE")
+            return True
+        else:
+            print("Validation - returning Flase")
+            return False
+
+    def _convert_values_to_int(self, values):
+        return {key: int(value) for key, value in values.items()}
+
+    def _clear_layout(self, layout):
+        for i in reversed(range(layout.count())):
+            layout.itemAt(i).widget().setParent(None)
 
     def create_tasks(self, **kwargs):
         min_time = kwargs["min_time"]
@@ -182,9 +231,9 @@ class LiuWindow(QMainWindow):
         print("[Start] create_tasks")
         tasks_list = []
         for el in range(tasks_number):
-            execution_time = random.randint(min_time, int(max_time/3))
+            execution_time = random.randint(min_time, int(max_time / 3)) + 1
             release_time = random.randint(min_time, max_time)
-            deadline = release_time + execution_time + int(3 / 2 * random.randint(min_time, int(max_time/3)))
+            deadline = release_time + execution_time + int(3 / 2 * random.randint(min_time, int(max_time / 3)))
 
             tasks_list.append(Task(p=execution_time, r=release_time, d=deadline))
         print("[End]   create_tasks")
@@ -198,8 +247,14 @@ class LiuWindow(QMainWindow):
 
         return tasks_list
 
-    def fill_input_grid(self, tasks_list):
+    def fill_input_grid(self):
         print("[Start] fill_input_grid")
+
+        tasks_print_table = []
+        for task in self.tasks_list:
+            task_row = [task, task.execution_time, task.release_time, task.deadline]
+            tasks_print_table.append(task_row)
+
         tasks_n_label = QLabel("<h2>Task</h2>")
         p_label = QLabel("<h2>p</h2>")
         r_label = QLabel("<h2>r</h2>")
@@ -213,7 +268,7 @@ class LiuWindow(QMainWindow):
         self.input_values_layout.addWidget(r_label, 0, 2)
         self.input_values_layout.addWidget(d_label, 0, 3)
 
-        for row, task in enumerate(tasks_list):
+        for row, task in enumerate(tasks_print_table):
             color = task[0].task_color
             for col, task_parameter in enumerate(task):
                 parameter = QLabel(f"{str(task_parameter)}")
@@ -226,26 +281,32 @@ class LiuWindow(QMainWindow):
 
     def generate_input(self, creation_method):
         print("[Start] generate_input")
-        if creation_method == self.create_tasks:
-            print("Creation method is: user method")
-            user_values = self.get_user_values()
-            self.tasks_list = creation_method(
-                min_time=user_values.get("min_time"),
-                max_time=user_values.get("max_time"),
-                tasks_number=user_values.get("tasks_number")
-            )
-        elif creation_method == self.create_tasks_default:
-            print("Creation method is: default method")
-            self.tasks_list = creation_method(values=DEFAULT_TASK_VALUES)
-        else:
-            raise Exception(f"Given tasks creation method:\n\t{creation_method}\nis not a user creation method:\n\t{self.create_tasks}\nand not a default creation method:\n\t{self.create_tasks_default}")
+        # clean up
+        self._delete_tasks()
+        self._clear_layout(self.input_values_layout)
+        self._clear_layout(self.output_values_layout)
+        self._clear_layout(self.graph_values_layout)
+        self.lmax_label.setText(f"")
 
-        tasks_print_table = []
-        for task in self.tasks_list:
-            task_row = [task, task.execution_time, task.release_time, task.deadline]
-            tasks_print_table.append(task_row)
-        # print data
-        self.fill_input_grid(tasks_print_table)
+        if creation_method == self.create_tasks:
+            user_values = self.get_user_values()
+            validation_pass = self._validate_user_values(user_values)
+            if validation_pass:
+                user_values = self._convert_values_to_int(user_values)
+                self.invalid_params_label.setText("")
+                self.tasks_list = creation_method(
+                    min_time=user_values.get("min_time"),
+                    max_time=user_values.get("max_time"),
+                    tasks_number=user_values.get("tasks_number")
+                )
+            else:
+                self._clear_user_values()
+                self.invalid_params_label.setText("Invalid parameters! Try again.")
+        elif creation_method == self.create_tasks_default:
+            self.tasks_list = creation_method(values=DEFAULT_TASK_VALUES)
+
+        if self.tasks_list:
+            self.fill_input_grid()
         print("[End]   generate_input")
 
     def perform_alg(self, tasks):
@@ -333,10 +394,13 @@ class LiuWindow(QMainWindow):
             time_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
             self.graph_values_layout.addWidget(time_label, 1, idx)
 
-        self.graph_quarter_layout.addWidget(QLabel(f"<h2>L<sub>max</sub>= {lmax}</h2>"), alignment=Qt.AlignmentFlag.AlignCenter)
+        self.lmax_label.setText(f"<h2>L<sub>max</sub>= {lmax}</h2>")
         print("[End]   fill_graph_layout")
 
     def order_tasks(self):
+        self._clear_layout(self.output_values_layout)
+        self._clear_layout(self.graph_values_layout)
+        self.lmax_label.setText(f"")
         # run Liu algorithm
         tasks_exec_order = self.perform_alg(self.tasks_list)
         # get tasks Li values
@@ -354,10 +418,32 @@ class LiuWindow(QMainWindow):
         print(f"Tasks order: {tasks_exec_order}")
         self.fill_graph_layout(tasks_exec_order, lmax)
 
+        # clean up
+        self._delete_tasks()
+
+    def _delete_tasks(self):
+        if self.tasks_list:
+            for task_obj in self.tasks_list:
+                print(f"Delete task {task_obj}")
+                del task_obj
+        self.tasks_list = None
+        Task.task_number = 0
+
+    def clear(self):
+        print("[Start] clear")
+        self._delete_tasks()
+        self._clear_user_values()
+        self._clear_layout(self.input_values_layout)
+        self._clear_layout(self.output_values_layout)
+        self._clear_layout(self.graph_values_layout)
+        self.lmax_label.setText(f"")
+        print("[End]   clear")
+
     def _connect_signals_and_slots(self):
         self.button_user.clicked.connect(partial(self.generate_input, self.create_tasks))
         self.button_default.clicked.connect(partial(self.generate_input, self.create_tasks_default))
         self.button_run_alg.clicked.connect(self.order_tasks)
+        self.button_clear.clicked.connect(self.clear)
 
 
 if __name__ == "__main__":
